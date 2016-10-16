@@ -8,4 +8,6 @@
                  [org.clojure/core.async "0.2.385"]
                  [com.taoensso/timbre "4.7.4"]
                  [cheshire "5.6.1"]]
+  :source-paths ["src/clj"]
+  :java-source-paths ["src/java"]
   :eval-in-leiningen true)
