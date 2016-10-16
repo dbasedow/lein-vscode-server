@@ -54,7 +54,7 @@
     nil)
 
 (defn goto-definition [msg]
-    {:uri "file:///Users/danielbasedow/.m2/repository/cljs-tooling/cljs-tooling/0.1.3/cljs-tooling-0.1.3.jar"
+    {:uri ""
      :range {
         :start {:line 1 :character 1}
         :end {:line 2 :character 1}}})

@@ -7,7 +7,8 @@
                  [cljfmt "0.5.3"]
                  [org.clojure/core.async "0.2.385"]
                  [com.taoensso/timbre "4.7.4"]
-                 [cheshire "5.6.1"]]
+                 [cheshire "5.6.1"]
+                 [org.clojure/tools.analyzer.jvm "0.6.10"]]
   :source-paths ["src/clj"]
   :java-source-paths ["src/java"]
   :eval-in-leiningen true)
