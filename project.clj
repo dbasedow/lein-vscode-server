@@ -9,6 +9,7 @@
                  [com.taoensso/timbre "4.7.4"]
                  [cheshire "5.6.1"]
                  [org.clojure/tools.analyzer.jvm "0.6.10"]]
+  :plugins [[vscode-server-lein "0.1.0-SNAPSHOT"]]
   :source-paths ["src/clj"]
   :java-source-paths ["src/java"]
   :eval-in-leiningen true)
