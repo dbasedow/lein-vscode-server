@@ -10,6 +10,8 @@
                  [cheshire "5.6.1"]
                  [org.clojure/tools.analyzer.jvm "0.6.10"]]
   :plugins [[vscode-server-lein "0.1.0-SNAPSHOT"]]
+  :main ^:skip-aot vscodeclj.core
   :source-paths ["src/clj"]
   :java-source-paths ["src/java"]
+  :jvm-opts ["-Xmx1G"]
   :eval-in-leiningen true)

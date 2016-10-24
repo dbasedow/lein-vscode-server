@@ -1,7 +1,10 @@
 (ns vscodeclj.core
   (:require [clojure.string :as str]
             [vscodeclj.methods :as methods]
+            [vscodeclj.globals :refer [*src-path*]]
             [vscodeclj.io :as io]
+            [clojure.java.io]
+            [clojure.pprint :refer [pprint]]
             [cheshire.core :as json]
             [taoensso.timbre :as l]
             [taoensso.timbre.appenders.core :as appenders]
@@ -23,6 +26,7 @@
       "textDocument/formatting" (methods/document-format params)
       "textDocument/didSave" (methods/document-did-save params)
       "textDocument/definition" (methods/goto-definition params)
+      "textDocument/completion" (methods/completion params)
       nil))
 
 (defn make-response [body id]
@@ -35,10 +39,19 @@
     (some-> (dispatch method params)
             (make-response id))))
 
-(defn run [& args]
-  (loop []
-    (let [headers (io/read-headers)
+(defn run [project]
+  (binding [*src-path* (:src-path project)]
+    (l/error *src-path*)
+      (loop []
+        (let [headers (io/read-headers)
           payload (io/read-payload headers)]
           (some->> (handle-msg payload)
                    (>!! io/out-chan))
-    (recur))))
+          (recur)))))
+
+(defn initialize [source-path]
+  (->> source-path
+       first))
+
+(defn -main [& args]
+  (run {:src-path (.getAbsolutePath (clojure.java.io/file "src/clj"))}))

@@ -3,7 +3,11 @@
             [cljfmt.core :as fmt]
             [rewrite-clj.parser :as p]
             [vscodeclj.diff :as diff]
+            [taoensso.timbre :as l]
             [vscodeclj.io :as io]
+            [vscodeclj.symbols :as sym]
+            [vscodeclj.symbols.util :as sym-util]
+            [clojure.java.io]
             [vscodeclj.validate :as vali]
             [cheshire.core :as json]
             [clojure.core.async :refer [go >!! <!! close! chan pub alts! sub unsub timeout]]))
@@ -15,12 +19,14 @@
             :textDocumentSync 1
             :documentFormattingProvider true
             :definitionProvider true
+            :completionProvider true
         }})
 
 (defn document-did-load-method [msg]
-    (let [uri (get-in msg [:params :textDocument :uri])
-          content (get-in msg [:params :textDocument :text])]
-        (swap! documents assoc uri content))
+    (let [uri (get-in msg [:textDocument :uri])
+          content (get-in msg [:textDocument :text])]
+        (swap! documents assoc uri content)
+        (sym/update-symbols-for-uri! uri))
     nil)
 
 (defn document-changed-method [msg]
@@ -47,9 +53,10 @@
           }})))
 
 (defn document-did-save [msg]
-    (let [uri (get-in msg [:params :textDocument :uri])
+    (let [uri (get-in msg [:textDocument :uri])
           content (get @documents uri)]
         (go
+            (l/error "should update symbol table")
             (publish-diagnostics uri)))
     nil)
 
@@ -58,3 +65,9 @@
      :range {
         :start {:line 1 :character 1}
         :end {:line 2 :character 1}}})
+
+(defn completion [msg]
+  (let [uri (get-in msg [:textDocument :uri])
+        content (get @documents uri)
+        {:keys [line character]} (:position msg)]
+    (l/error (sym-util/get-symbol-to-complete content line character))))
