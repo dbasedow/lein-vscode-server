@@ -21,5 +21,5 @@
 
 (defn get-symbol-to-complete [doc ln ch]
   (let [line (get-line doc ln)
-        startpos (find-symbol-start line ch)]
-    (subs line (inc startpos) (inc ch))))
+        startpos (find-symbol-start line (dec ch))]
+    (subs line (inc startpos) ch)))

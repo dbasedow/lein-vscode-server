@@ -45,6 +45,8 @@
       (loop []
         (let [headers (io/read-headers)
           payload (io/read-payload headers)]
+;          (spit "cmds.in" (str "Content-Length: " (get headers "Content-Length") "\r\n\r\n") :append true)
+;          (spit "cmds.in" (str payload) :append true)
           (some->> (handle-msg payload)
                    (>!! io/out-chan))
           (recur)))))

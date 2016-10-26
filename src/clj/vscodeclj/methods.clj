@@ -70,4 +70,5 @@
   (let [uri (get-in msg [:textDocument :uri])
         content (get @documents uri)
         {:keys [line character]} (:position msg)]
-    (l/error (sym-util/get-symbol-to-complete content line character))))
+    {:isIncomplete false
+     :items (map #(hash-map :label (first %)) (take 10 (sym/get-completion-items uri content line character)))}))

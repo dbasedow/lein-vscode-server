@@ -1,6 +1,7 @@
 (ns vscodeclj.symbols
     (:require [vscodeclj.symbols.extraction :as ex]
               [vscodeclj.globals :refer [*src-path*]]
+              [vscodeclj.symbols.util :as util]
               [clojure.pprint :refer [pprint]]
               [taoensso.timbre :as l]
               [clojure.java.io :as io]
@@ -98,3 +99,14 @@
           symbols (ex/analyze-ns ns)]
         (update-symbols! ns symbols))
     (catch Exception e (l/error e))))
+
+(defn find-matches [partial-symbol ns]
+  (l/error "-" partial-symbol "-")
+  (->> (get @symbols ns)
+       (filter #(s/starts-with? (first %) partial-symbol))))
+
+(defn get-completion-items [uri doc ln ch]
+  (try
+      (-> (util/get-symbol-to-complete doc ln ch)
+          (find-matches (uri->ns uri *src-path*)))
+  (catch Exception e (l/error e))))
