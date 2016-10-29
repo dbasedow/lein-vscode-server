@@ -12,8 +12,6 @@
 
 (def symbols (atom {}))
 
-;(add-watch symbols :dbg-watcher (fn [key obj old new] (l/info new)))
-
 (defn ns->fname [namespace]
     (-> namespace
         (s/replace #"-" "_")
@@ -67,9 +65,6 @@
          (map slashes->dots)
          (map fname->lisp-case)))
 
-(defn analyze-file [fname]
-    [fname (ex/analyze-file fname)])
-
 (defn to-inner-map [res [sym details]]
     (assoc res sym details))
 
@@ -79,11 +74,8 @@
          (assoc res ns)))
 
 (defn initialize [dir]
-    (->> ;(clj-files-in-dir dir)
-         (find-ws-namespaces dir)
-         ;(map analyze-file)
+    (->> (find-ws-namespaces dir)
          (map ex/analyze-ns)
-         ;(reduce to-map {})
          pprint))
 
 (defn uri->ns [uri srcroot]
@@ -114,5 +106,6 @@
 (defn get-completion-items [uri doc ln ch]
   (try
       (-> (util/get-symbol-to-complete doc ln ch)
-          (find-matches (uri->ns uri *src-path*)))
+          (find-matches (uri->ns uri *src-path*))
+          (->> (take 10)))
   (catch Exception e (l/error e))))

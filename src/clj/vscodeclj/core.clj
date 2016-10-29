@@ -1,5 +1,6 @@
 (ns vscodeclj.core
   (:require [clojure.string :as str]
+            [clojure.tools.nrepl.server :refer [start-server stop-server]]
             [vscodeclj.methods :as methods]
             [vscodeclj.globals :refer [*src-path*]]
             [vscodeclj.io :as io]
@@ -35,13 +36,14 @@
 
 (defn handle-msg [enc]
   (let [{:keys [id method params] :as msg} (json/parse-string enc keyword)]
-    (l/error msg)
+    ;(l/error msg)
     (some-> (dispatch method params)
             (make-response id))))
 
 (defn run [project]
   (binding [*src-path* (:src-path project)]
-    (l/error *src-path*)
+;    (start-server :port 7888)
+;    (l/error *src-path*)
       (loop []
         (let [headers (io/read-headers)
           payload (io/read-payload headers)]

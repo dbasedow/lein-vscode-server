@@ -3,7 +3,6 @@
             [clojure.tools.analyzer.jvm :as analyzer]
             [clojure.pprint :refer [pprint]]
             [clojure.tools.analyzer.passes :as passes]
-            [vscodeclj.symbols.analyzer :as an]
             [vscodeclj.symbols.records :as s]))
 (declare analyze-ns)
 
@@ -172,7 +171,3 @@
             (catch Exception e
                 (println e)))))
 
-(defn analyze-file [fname]
-    (->> (an/analyze-file fname)
-         ast-zipper
-         find-symbols))
