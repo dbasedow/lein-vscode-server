@@ -4,6 +4,8 @@
               [vscodeclj.symbols.util :as util]
               [clojure.pprint :refer [pprint]]
               [taoensso.timbre :as l]
+              [clojure.tools.analyzer.jvm :as analyzer]
+              [clojure.tools.analyzer.env :as env :refer [*env*]]
               [clojure.java.io :as io]
               [clojure.string :as s])
     (:import [java.net.URI]))
@@ -102,8 +104,12 @@
 
 (defn find-matches [partial-symbol ns]
   (l/error "-" partial-symbol "-")
-  (->> (get @symbols ns)
-       (filter #(s/starts-with? (first %) partial-symbol))))
+  (env/ensure (analyzer/global-env)
+    (-> (env/deref-env)
+        (get-in [:namespaces (symbol ns) :mappings])
+        seq
+        (->>
+            (filter #(s/starts-with? (str (first %)) partial-symbol))))))
 
 (defn get-completion-items [uri doc ln ch]
   (try
