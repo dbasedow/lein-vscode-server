@@ -66,9 +66,18 @@
         :start {:line 1 :character 1}
         :end {:line 2 :character 1}}})
 
+(defn- add-documentation [resp info]
+  (if-let [doc (:doc info)]
+    (assoc resp :documentation doc)))
+
+(defn serialize-completion-item [[symbol var]]
+  (let [info (meta var)]
+      (-> {:label symbol}
+          (add-documentation info))))
+
 (defn completion [msg]
   (let [uri (get-in msg [:textDocument :uri])
         content (get @documents uri)
         {:keys [line character]} (:position msg)]
     {:isIncomplete false
-     :items (map #(hash-map :label (first %)) (take 10 (sym/get-completion-items uri content line character)))}))
+     :items (map serialize-completion-item (sym/get-completion-items uri content line character))}))
