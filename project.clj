@@ -1,6 +1,6 @@
-(defproject vscode-server-lein "0.1.0-SNAPSHOT"
+(defproject lein-vscode-server "0.1.0-SNAPSHOT"
   :description "Visual Studio Code Clojure support"
-  :url "http://example.com/FIXME"
+  :url "https://github.com/dbasedow/lein-vscode-server"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[jline "2.12"]
@@ -9,7 +9,6 @@
                  [com.taoensso/timbre "4.7.4"]
                  [cheshire "5.6.1"]
                  [org.clojure/tools.analyzer.jvm "0.6.10"]]
-  :plugins [[vscode-server-lein "0.1.0-SNAPSHOT"]]
   :main ^:skip-aot vscodeclj.core
   :source-paths ["src/clj"]
   :java-source-paths ["src/java"]

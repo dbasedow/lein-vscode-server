@@ -1,4 +1,4 @@
-(ns leiningen.vscode-server-lein
+(ns leiningen.lein-vscode-server
   (:require [leiningen.core.eval :as eval]
             [cemerick.pomegranate :as po]
             [leiningen.core.classpath :refer [get-classpath]]
@@ -7,8 +7,7 @@
             [vscodeclj.core :as srv]
             [clojure.java.io :as io]))
 
-(defn vscode-server-lein
-  "I don't do a lot."
+(defn lein-vscode-server
   [project & args]
     (doseq [p (get-classpath project)]
       (po/add-classpath p))
