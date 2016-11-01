@@ -42,8 +42,6 @@
 
 (defn run [project]
   (binding [*src-path* (:src-path project)]
-;    (start-server :port 7888)
-;    (l/error *src-path*)
       (loop []
         (let [headers (io/read-headers)
           payload (io/read-payload headers)]
@@ -52,10 +50,6 @@
           (some->> (handle-msg payload)
                    (>!! io/out-chan))
           (recur)))))
-
-(defn initialize [source-path]
-  (->> source-path
-       first))
 
 (defn -main [& args]
   (run {:src-path (.getAbsolutePath (clojure.java.io/file "src/clj"))}))

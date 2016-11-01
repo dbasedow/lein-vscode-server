@@ -1,15 +1,12 @@
 (ns vscodeclj.methods
   (:require [clojure.string :as str]
             [cljfmt.core :as fmt]
-            [rewrite-clj.parser :as p]
             [vscodeclj.diff :as diff]
             [taoensso.timbre :as l]
             [vscodeclj.io :as io]
             [vscodeclj.symbols :as sym]
-            [vscodeclj.symbols.util :as sym-util]
             [clojure.java.io]
             [vscodeclj.validate :as vali]
-            [cheshire.core :as json]
             [clojure.core.async :refer [go >!! <!! close! chan pub alts! sub unsub timeout]])
     (:import [java.net URI]))
 

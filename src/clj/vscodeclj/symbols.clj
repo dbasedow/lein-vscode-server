@@ -18,21 +18,6 @@
         (s/replace #"\." "/")
         (str ".clj")))
 
-(defn is-dir?
-    [file]
-    (.isDirectory file))
-
-(defn is-clj-file? 
-    [file]
-    (-> (.getName file)
-        (.endsWith ".clj")))
-
-(defn clj-files-in-dir [root]
-    (->> (io/file root)
-         file-seq
-         (filter (complement is-dir?))
-         (filter is-clj-file?)))
-
 (defn remove-path-prefix [prefix fname]
     (s/replace-first fname prefix ""))
 
@@ -56,15 +41,6 @@
         slashes->dots
         fname->lisp-case))
 
-(defn find-ws-namespaces [dir]
-    (->> (clj-files-in-dir dir)
-         (map #(.getPath %))
-         (map (partial remove-path-prefix dir))
-         (map remove-clj-suffix)
-         (map remove-leading-slash)
-         (map slashes->dots)
-         (map fname->lisp-case)))
-
 (defn to-inner-map [res [sym details]]
     (assoc res sym details))
 
@@ -72,11 +48,6 @@
     (->> symbols
          (reduce to-inner-map {})
          (assoc res ns)))
-
-(defn initialize [dir]
-    (->> (find-ws-namespaces dir)
-         (map ex/analyze-ns)
-         pprint))
 
 (defn uri->ns [uri srcroot]
     (-> uri
