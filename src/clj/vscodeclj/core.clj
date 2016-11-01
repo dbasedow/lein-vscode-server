@@ -28,6 +28,7 @@
       "textDocument/didSave" (methods/document-did-save params)
       "textDocument/definition" (methods/goto-definition params)
       "textDocument/completion" (methods/completion params)
+      "custom/getJarContent" (methods/get-jar-content params)
       nil))
 
 (defn make-response [body id]
@@ -36,7 +37,6 @@
 
 (defn handle-msg [enc]
   (let [{:keys [id method params] :as msg} (json/parse-string enc keyword)]
-    ;(l/error msg)
     (some-> (dispatch method params)
             (make-response id))))
 

@@ -94,8 +94,15 @@
         (update-symbols! ns symbols))
     (catch Exception e (l/error e))))
 
+(defn find-symbol [sym ns]
+  (env/ensure (analyzer/global-env)
+    (-> (env/deref-env)
+        (get-in [:namespaces (symbol ns) :mappings])
+        seq
+        (->>
+            (filter #(= (str (first %)) sym))))))
+
 (defn find-matches [partial-symbol ns]
-  (l/error "-" partial-symbol "-")
   (env/ensure (analyzer/global-env)
     (-> (env/deref-env)
         (get-in [:namespaces (symbol ns) :mappings])
@@ -109,3 +116,10 @@
           (find-matches (uri->ns uri *src-path*))
           (->> (take 10)))
   (catch Exception e (l/error e))))
+
+(defn get-symbol-def-pos [uri doc ln ch]
+  (-> (util/get-symbol-at-cursor doc ln ch)
+      (find-symbol (uri->ns uri *src-path*))
+      first
+      second
+      meta))

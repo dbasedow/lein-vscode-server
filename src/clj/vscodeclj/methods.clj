@@ -10,7 +10,8 @@
             [clojure.java.io]
             [vscodeclj.validate :as vali]
             [cheshire.core :as json]
-            [clojure.core.async :refer [go >!! <!! close! chan pub alts! sub unsub timeout]]))
+            [clojure.core.async :refer [go >!! <!! close! chan pub alts! sub unsub timeout]])
+    (:import [java.net URI]))
 
 (def documents (atom {}))
 
@@ -61,10 +62,14 @@
     nil)
 
 (defn goto-definition [msg]
-    {:uri ""
+  (let [uri (get-in msg [:textDocument :uri])
+        content (get @documents uri)
+        {:keys [line character]} (:position msg)
+        m (sym/get-symbol-def-pos uri content line character)]
+    {:uri (str (:file m))
      :range {
-        :start {:line 1 :character 1}
-        :end {:line 2 :character 1}}})
+        :start {:line (:line m) :character (:column m)}
+        :end {:line (:line m) :character (:column m)}}}))
 
 (defn- add-documentation [resp info]
   (if-let [doc (:doc info)]
@@ -81,3 +86,7 @@
         {:keys [line character]} (:position msg)]
     {:isIncomplete false
      :items (map serialize-completion-item (sym/get-completion-items uri content line character))}))
+
+(defn get-jar-content [msg]
+  (if-let [c (slurp (URI. (:uri msg)))]
+    {:content c}))
