@@ -6,6 +6,7 @@
             [vscodeclj.io :as io]
             [vscodeclj.symbols :as sym]
             [clojure.java.io]
+            [clojure.string :as str]
             [vscodeclj.validate :as vali]
             [clojure.core.async :refer [go >!! <!! close! chan pub alts! sub unsub timeout]])
     (:import [java.net URI]))
@@ -62,8 +63,9 @@
   (let [uri (get-in msg [:textDocument :uri])
         content (get @documents uri)
         {:keys [line character]} (:position msg)
-        m (sym/get-symbol-def-pos uri content line character)]
-    {:uri (str (:file m))
+        m (sym/get-symbol-def-pos uri content line character)
+        f (:file m)]
+    {:uri (if (or (str/starts-with? f "jar:") (str/starts-with? f "file:")) f (str (clojure.java.io/resource f)))
      :range {
         :start {:line (:line m) :character (:column m)}
         :end {:line (:line m) :character (:column m)}}}))
